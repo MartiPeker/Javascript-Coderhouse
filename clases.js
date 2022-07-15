@@ -66,14 +66,3 @@ class GameController{
 
 let gameController = new GameController();
 
-
-// function Interactuable (name, life, x, y, dmge, src){
-//     this.name = name;
-//     this.life = life;
-//     this.x = x;
-//     this.y = y;
-//     this.dmge = dmge;
-//     this.src = src;
-// }
-
-// let cat = new Interactuable(gato, 7, 0, 0, 5, "./images/cat.png");
