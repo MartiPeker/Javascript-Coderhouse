@@ -14,6 +14,20 @@ class Player extends Entity{
         this.life = life;
         this.dmge = dmge;
     }
+
+    // moveX(operacion) {
+    //     positionX =+ (operacion*0,1);
+    // }
+    getPosition(){
+        return [this.positionX, this.positionY]
+    }
+
+
+    setPosition(newPosition){
+        this.positionX = newPosition[0];
+        this.positionY = newPosition[1];
+    }
+
 }
 
 class Enemy extends Entity{
@@ -37,32 +51,79 @@ class Board{
         this.enemys = enemys;
         this.foods = foods;
         this.canvas = canvas;
+        this.canvasWidth = 500;
+        this.canvasHeigth = 500;
         this.ctx = ctx;
 
         this.drawEntity(this.player);
+        this.foods.map(foods => this.drawEntity(foods));
+        this.enemys.map(enemy => this.drawEntity(enemy)); //Recorro el array enemys con map y aplico el evento draw en cada elemento)
     }
     drawEntity(entity){
         this.ctx.drawImage(entity.src, entity.positionX, entity.positionY, entity.width, entity.height);
     }
+    
+    get Player(){
+        this.player.positionX;
+    }
+
+    update(){
+        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeigth);
+        this.drawEntity(this.player);
+        this.foods.map(foods => this.drawEntity(foods));
+        this.enemys.map(enemy => this.drawEntity(enemy));
+    }
+    
 }
+   
 
 class GameController{
     constructor(){
-        const playerImage = document.getElementById("source");
-        const enemyImage = "";
-        const foodImage = "";
+        const playerImage = document.getElementById("playerImg");
+        const enemyImage = document.getElementById("enemyImg");
+        const foodImage = document.getElementById("foodImg");
         const widthStandard = 40;
         const heightStandard = 40;      
         const canvas = document.getElementById("escenario");
+        this.movement = document.getElementById("body");
         let ctx = canvas.getContext("2d");
         //-----------
-        let player = new Player(7, 4, 0, 0, widthStandard, heightStandard, playerImage);
-        let enemys = [new Enemy(2, 1, 4, 0, widthStandard, heightStandard, enemyImage), new Enemy(2, 1, 9, 0, widthStandard, heightStandard, enemyImage)];
-        let foods = [new Food(2, -2, 0, widthStandard, heightStandard, foodImage), new Food(2, 10, 0, widthStandard, heightStandard, foodImage)];
+        let player = new Player(7, 4, 0, 400, widthStandard, heightStandard, playerImage);
+        let enemys = [new Enemy(2, 0, 100, 400, widthStandard, heightStandard, enemyImage), new Enemy(2, 2, 300, 400, widthStandard, heightStandard, enemyImage)];
+        let foods = [new Food(2, 400, 400, widthStandard, heightStandard, foodImage), new Food(2, 150, 400, widthStandard, heightStandard, foodImage)];
         // ----------
         this.board = new Board(player, enemys, foods, canvas, ctx);
     }
+
+    get player(){
+        return this.board.player;
+    };
+    
+    load(){
+    this.movement.addEventListener("keydown", (e) => {
+        let playerPosition = this.board.player.getPosition();
+        switch(e.key){            
+            case "w":
+                console.log("w");
+                break;
+            case "s":
+                console.log("s");
+                break;
+            case "a":
+                playerPosition[0] =-10;
+                this.board.player.setPosition(playerPosition);
+                this.board.update();
+                break;
+            case "d":
+                playerPosition[0] =+10;
+                this.board.player.setPosition(playerPosition);
+                this.board.update();
+                break;
+        }
+    });
+    }
+    
 }
 
 let gameController = new GameController();
-
+gameController.load();
