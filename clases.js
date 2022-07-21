@@ -9,15 +9,13 @@ class Entity{
 }
 
 class Player extends Entity{
-    constructor (life, dmge, positionX, positionY, width, height, src){
+    constructor (life, dmge, positionX, positionY, speed, width, height, src){
         super(positionX, positionY, width, height, src)
         this.life = life;
         this.dmge = dmge;
+        this.speed = speed;
     }
 
-    // moveX(operacion) {
-    //     positionX =+ (operacion*0,1);
-    // }
     getPosition(){
         return [this.positionX, this.positionY]
     }
@@ -83,12 +81,13 @@ class GameController{
         const enemyImage = document.getElementById("enemyImg");
         const foodImage = document.getElementById("foodImg");
         const widthStandard = 40;
-        const heightStandard = 40;      
+        const heightStandard = 40;
+        const playerSpeed = 10.3;
         const canvas = document.getElementById("escenario");
         this.movement = document.getElementById("body");
         let ctx = canvas.getContext("2d");
         //-----------
-        let player = new Player(7, 4, 0, 400, widthStandard, heightStandard, playerImage);
+        let player = new Player(7, 4, 0, 400, playerSpeed,widthStandard, heightStandard, playerImage);
         let enemys = [new Enemy(2, 0, 100, 400, widthStandard, heightStandard, enemyImage), new Enemy(2, 2, 300, 400, widthStandard, heightStandard, enemyImage)];
         let foods = [new Food(2, 400, 400, widthStandard, heightStandard, foodImage), new Food(2, 150, 400, widthStandard, heightStandard, foodImage)];
         // ----------
@@ -110,12 +109,12 @@ class GameController{
                 console.log("s");
                 break;
             case "a":
-                playerPosition[0] =-10;
+                playerPosition[0] -= 1 * this.board.player.speed;;
                 this.board.player.setPosition(playerPosition);
                 this.board.update();
                 break;
             case "d":
-                playerPosition[0] =+10;
+                playerPosition[0] += 1 * this.board.player.speed;;
                 this.board.player.setPosition(playerPosition);
                 this.board.update();
                 break;
