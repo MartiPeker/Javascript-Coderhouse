@@ -3,7 +3,7 @@ class Entity{
         this.positionX = positionX;
         this.positionY = positionY;
         this.width = width;
-        this. height = height;
+        this.height = height;
         this.src = src;
     }
 }
@@ -19,6 +19,7 @@ class Player extends Entity{
     getPosition(){
         return [this.positionX, this.positionY]
     }
+    
 
 
     setPosition(newPosition){
@@ -80,17 +81,16 @@ class GameController{
         const playerImage = document.getElementById("playerImg");
         const enemyImage = document.getElementById("enemyImg");
         const foodImage = document.getElementById("foodImg");
+        const backgroundImage = document.getElementById("background");
         const widthStandard = 40;
         const heightStandard = 40;
         const playerSpeed = 10.3;
         const canvas = document.getElementById("escenario");
         this.movement = document.getElementById("body");
         let ctx = canvas.getContext("2d");
-        //-----------
         let player = new Player(7, 4, 0, 400, playerSpeed,widthStandard, heightStandard, playerImage);
         let enemys = [new Enemy(2, 0, 100, 400, widthStandard, heightStandard, enemyImage), new Enemy(2, 2, 300, 400, widthStandard, heightStandard, enemyImage)];
         let foods = [new Food(2, 400, 400, widthStandard, heightStandard, foodImage), new Food(2, 150, 400, widthStandard, heightStandard, foodImage)];
-        // ----------
         this.board = new Board(player, enemys, foods, canvas, ctx);
     }
 
@@ -101,7 +101,7 @@ class GameController{
     load(){
     this.movement.addEventListener("keydown", (e) => {
         let playerPosition = this.board.player.getPosition();
-        switch(e.key){            
+        switch(e.key){      
             case "w":
                 console.log("w");
                 break;
@@ -109,20 +109,33 @@ class GameController{
                 console.log("s");
                 break;
             case "a":
-                playerPosition[0] -= 1 * this.board.player.speed;;
-                this.board.player.setPosition(playerPosition);
-                this.board.update();
+                if(playerPosition[0] >= 1 ){
+                    playerPosition[0] -= 1 * this.board.player.speed;
+                    this.board.player.setPosition(playerPosition);
+                    this.board.update();
+                    console.log(playerPosition);
+                }
                 break;
             case "d":
-                playerPosition[0] += 1 * this.board.player.speed;;
+                if(playerPosition[0] <= 460){
+                playerPosition[0] += 1 * this.board.player.speed;
                 this.board.player.setPosition(playerPosition);
                 this.board.update();
+                console.log(playerPosition);
+                }
                 break;
         }
     });
+    }
+    
+    play(){
+        if((this.board.player.positionX + this.board.player.width/2) == (this.board.foods[0].positionX - this.board.foods[0].width/2)){
+           return console.log("esta pasando");
+        }
     }
     
 }
 
 let gameController = new GameController();
 gameController.load();
+gameController.play();
