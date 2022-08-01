@@ -86,12 +86,18 @@ class GameController{
         const heightStandard = 40;
         const playerSpeed = 10.3;
         const canvas = document.getElementById("escenario");
+        let positionBeforeX = parseInt(localStorage.getItem("playerPositionX"));
+        if (isNaN(positionBeforeX)){
+            positionBeforeX = 0;
+        }
+        let positionBeforeY = 400;
         this.movement = document.getElementById("body");
         let ctx = canvas.getContext("2d");
-        let player = new Player(7, 4, 0, 400, playerSpeed,widthStandard, heightStandard, playerImage);
+        let player = new Player(7, 4, positionBeforeX, positionBeforeY, playerSpeed,widthStandard, heightStandard, playerImage);
         let enemys = [new Enemy(2, 0, 100, 400, widthStandard, heightStandard, enemyImage), new Enemy(2, 2, 300, 400, widthStandard, heightStandard, enemyImage)];
         let foods = [new Food(2, 400, 400, widthStandard, heightStandard, foodImage), new Food(2, 150, 400, widthStandard, heightStandard, foodImage)];
         this.board = new Board(player, enemys, foods, canvas, ctx);
+        this.count = 5;
     }
 
     get player(){
@@ -101,10 +107,14 @@ class GameController{
     load(){
     this.movement.addEventListener("keydown", (e) => {
         let playerPosition = this.board.player.getPosition();
-        switch(e.key){      
+        switch(e.key){
             case "w":
-                console.log("w");
-                break;
+                if(playerPosition[1] >= 1 ){
+                    playerPosition[1] -= 10 * this.board.player.speed;
+                    this.board.player.setPosition(playerPosition);
+                    this.board.update();
+                    console.log(playerPosition);
+                break;}
             case "s":
                 console.log("s");
                 break;
@@ -113,7 +123,12 @@ class GameController{
                     playerPosition[0] -= 1 * this.board.player.speed;
                     this.board.player.setPosition(playerPosition);
                     this.board.update();
-                    console.log(playerPosition);
+                    this.count += -1;
+                if(this.count == 0){
+                    localStorage.setItem("playerPositionX", playerPosition[0]);
+                    this.count = 5;
+                }
+
                 }
                 break;
             case "d":
@@ -121,8 +136,14 @@ class GameController{
                 playerPosition[0] += 1 * this.board.player.speed;
                 this.board.player.setPosition(playerPosition);
                 this.board.update();
-                console.log(playerPosition);
+                console.log(localStorage.getItem("playerPosition", playerPosition));
+                this.count += -1;
+                if(this.count == 0){
+                    localStorage.setItem("playerPositionX", playerPosition[0]);
+                    this.count = 5;
                 }
+                console.log(playerPosition);
+            }
                 break;
         }
     });
