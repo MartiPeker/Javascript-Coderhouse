@@ -107,18 +107,17 @@ class GameController{
     load(){
     this.movement.addEventListener("keydown", (e) => {
         let playerPosition = this.board.player.getPosition();
-        switch(e.key){
-            case "w":
+        if(e.key == 87 || 38){
                 if(playerPosition[1] >= 1 ){
                     playerPosition[1] -= 10 * this.board.player.speed;
                     this.board.player.setPosition(playerPosition);
                     this.board.update();
                     console.log(playerPosition);
-                break;}
-            case "s":
+                }
+        else if(e.key = 83 || 40 ){
                 console.log("s");
-                break;
-            case "a":
+                }
+        else if(e.key == 65 || 37){
                 if(playerPosition[0] >= 1 ){
                     playerPosition[0] -= 1 * this.board.player.speed;
                     this.board.player.setPosition(playerPosition);
@@ -127,11 +126,9 @@ class GameController{
                 if(this.count == 0){
                     localStorage.setItem("playerPositionX", playerPosition[0]);
                     this.count = 5;
-                }
+                }}}
 
-                }
-                break;
-            case "d":
+        else if(e.key == 68 || 39){
                 if(playerPosition[0] <= 460){
                 playerPosition[0] += 1 * this.board.player.speed;
                 this.board.player.setPosition(playerPosition);
@@ -141,12 +138,10 @@ class GameController{
                 if(this.count == 0){
                     localStorage.setItem("playerPositionX", playerPosition[0]);
                     this.count = 5;
-                }
-                console.log(playerPosition);
-            }
-                break;
-        }
-    });
+                    console.log(playerPosition);
+                }}
+                
+    }}});
     }
     
     play(){
