@@ -117,14 +117,14 @@ class GameController{
     };
 
     collisionX(obj1, obj2){
-        let limiteIzqObj1 =  obj1.positionX - obj1.width/2;
-        let limiteDerObj1 = obj1.positionX + obj1.width/2;
-        let limiteIzqObj2 = obj2.positionX - obj2.width/2;
-        let limiteDerObj2 = obj2.positionX + obj2.width/2;
-        if(limiteIzqObj2 <= limiteDerObj1 && limiteDerObj1 <= limiteDerObj2){
+        let limitLeftObj1 =  obj1.positionX - obj1.width/2;
+        let limitRightObj1 = obj1.positionX + obj1.width/2;
+        let limitLeftObj2 = obj2.positionX - obj2.width/2;
+        let limitRightObj2 = obj2.positionX + obj2.width/2;
+        if(limitLeftObj2 <= limitRightObj1 && limitRightObj1 <= limitRightObj2){
             return true;
         }
-        if(limiteIzqObj2 <= limiteIzqObj1 && limiteIzqObj1 <= limiteDerObj2){
+        if(limitLeftObj2 <= limitLeftObj1 && limitLeftObj1 <= limitRightObj2){
             return true;
         }
         return false;
