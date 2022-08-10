@@ -1,3 +1,7 @@
+//Libreria
+
+
+
 class Entity{
     constructor (positionX, positionY, width, height, src){
         this.positionX = positionX;
@@ -11,7 +15,9 @@ class Entity{
 class Background extends Entity{
     constructor(positionX, positionY, width, height, src){
         super(positionX, positionY, width, height, src)
-    }
+        this.backgroundLoad = false;
+    }  
+    
 }
 
 class Player extends Entity{
@@ -65,34 +71,57 @@ class Board{
         this.drawEntity(this.background);
         this.drawEntity(this.player);
         this.foods.map(foods => this.drawEntity(foods));
-        this.enemys.map(enemy => this.drawEntity(enemy));
-    }
-    drawEntity(entity){
-        this.ctx.drawImage(entity.src, entity.positionX, entity.positionY, entity.width, entity.height);
+        this.enemys.map(enemy => this.drawEntity(enemy));       
+        
+        
     }
 
+
+    drawEntity(entity){
+        this.ctx.drawImage(entity.src, entity.positionX, entity.positionY, entity.width, entity.height);
+        
+    }    
     
     get Player(){
         this.player.positionX;
     }
 
+    
+    backgroundLoadChange(){
+        this.background.backgroundLoad = true;
+    }
+
+    backgroundLoad(){
+        this.backgroundImage.src.addEventListener("load", this.backgroundLoadChange())
+        if(this.background.backgroundLoad == true){
+            this.board.update();
+        }
+        };
+
     update(){
+        this.backgroundOK = this.background.backgroundLoad;
+        if(this.backgroundOK == false){
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeigth);
         this.drawEntity(this.background);
         this.drawEntity(this.player);
         this.foods.map(foods => this.drawEntity(foods));
-        this.enemys.map(enemy => this.drawEntity(enemy));
-    }
+        this.enemys.map(enemy => this.drawEntity(enemy));}console.log(this.backgroundOK)
+    } 
+
     
 }
 
 
 class GameController{
     constructor(){
-        const playerImage = document.getElementById("playerImg");
-        const enemyImage = document.getElementById("enemyImg");
-        const foodImage = document.getElementById("foodImg");
-        const backgroundImage = document.getElementById("background");
+        const playerImage = document.createElement('img');
+        playerImage.src = "images/cat.png"
+        const enemyImage = document.createElement('img');
+        enemyImage.src = "images/enemy.png"
+        const foodImage = document.createElement('img');
+        foodImage.src = "images/food.png"
+        const backgroundImage = document.createElement('img');
+        backgroundImage.src = "images/background.png"
         const widthStandard = 40;
         const heightStandard = 40;
         const playerSpeed = 10.3;
@@ -203,3 +232,33 @@ class GameController{
 
 let gameController = new GameController();
 gameController.load();
+
+
+// var timer = new Timer();
+// $('#chronoExample .startButton').click(function () {
+//     timer.start();
+// });
+
+// $('#chronoExample .pauseButton').click(function () {
+//     timer.pause();
+// });
+
+// $('#chronoExample .stopButton').click(function () {
+//     timer.stop();
+// });
+
+// $('#chronoExample .resetButton').click(function () {
+//     timer.reset();
+// });
+
+// timer.addEventListener('secondsUpdated', function (e) {
+//     $('#chronoExample .values').html(timer.getTimeValues().toString());
+// });
+
+// timer.addEventListener('started', function (e) {
+//     $('#chronoExample .values').html(timer.getTimeValues().toString());
+// });
+
+// timer.addEventListener('reset', function (e) {
+//     $('#chronoExample .values').html(timer.getTimeValues().toString());
+// });

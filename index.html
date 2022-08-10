@@ -6,17 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cat Web - Peker</title>
     <link rel="stylesheet" href="https://bootswatch.com/5/sketchy/bootstrap.min.css">
+    
 </head>
 <body id="body">
     <div class="container">
         <p class = "pt-5 text-center">link de github : https://github.com/MartiPeker/Javascript-Coderhouse/tree/master</p>
         <canvas class= "m-5" id="escenario" width="500" height="500"></canvas>
-            <img id="playerImg" src="./images/cat.png">
-            <img id="enemyImg" src="./images/enemy.png">
-            <img id="foodImg" src="./images/food.png">
-            <img id="background" src="./images/background.png">
     </div>
     <script src="./clases.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/easytimer@1.1.1/src/easytimer.min.js"></script>
+    
+    <div id="basicUsage">00:00:00</div>
 
+    <script>
+    var timer = new Timer();
+      timer.start();
+      timer.addEventListener('secondsUpdated', function(e) {
+          $('#basicUsage').html(timer.getTimeValues().toString());
+      });
+    </script>
 </body>
 </html>
