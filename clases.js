@@ -92,13 +92,13 @@ class Board{
 class GameController{
     constructor(playerImageSrc){
         const playerImage = document.createElement('img');
-        playerImage.src = playerImageSrc
+        playerImage.src = playerImageSrc;
         const enemyImage = document.createElement('img');
-        enemyImage.src = "images/enemy.png"
+        enemyImage.src = "images/enemy.png";
         const foodImage = document.createElement('img');
-        foodImage.src = "images/food.png"
+        foodImage.src = "images/food.png";
         const backgroundImage = document.createElement('img');
-        backgroundImage.src = "images/background.png"
+        backgroundImage.src = "images/background.png";
         const widthStandard = 40;
         const heightStandard = 40;
         const widthPlayer = 60;
@@ -167,7 +167,7 @@ class GameController{
     load(){
         setTimeout(() => {
         this.board.update()
-        },500);
+        },1000);
     this.movement.addEventListener("keydown", (e) => {
         let playerPosition = this.board.player.getPosition();
         switch(e.key){
@@ -210,6 +210,7 @@ class GameController{
 };
     
 }
+
 fetch("https://api.npoint.io/caa675e5edd5ab2c8a2b")
 .then(response => response.json())
 .then(json => {
