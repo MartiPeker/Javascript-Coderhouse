@@ -167,7 +167,7 @@ class GameController{
     load(){
         setTimeout(() => {
         this.board.update()
-        },1000);
+        },1500);
     this.movement.addEventListener("keydown", (e) => {
         let playerPosition = this.board.player.getPosition();
         switch(e.key){
