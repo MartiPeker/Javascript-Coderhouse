@@ -1,7 +1,3 @@
-//Libreria
-
-
-
 class Entity{
     constructor (positionX, positionY, width, height, src){
         this.positionX = positionX;
@@ -71,51 +67,32 @@ class Board{
         this.drawEntity(this.background);
         this.drawEntity(this.player);
         this.foods.map(foods => this.drawEntity(foods));
-        this.enemys.map(enemy => this.drawEntity(enemy));       
-        
-        
+        this.enemys.map(enemy => this.drawEntity(enemy));
     }
 
 
     drawEntity(entity){
         this.ctx.drawImage(entity.src, entity.positionX, entity.positionY, entity.width, entity.height);
-        
     }    
     
     get Player(){
         this.player.positionX;
     }
 
-    
-    backgroundLoadChange(){
-        this.background.backgroundLoad = true;
+    update(){
+            this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeigth);
+            this.drawEntity(this.background);
+            this.drawEntity(this.player);
+            this.foods.map(foods => this.drawEntity(foods));
+            this.enemys.map(enemy => this.drawEntity(enemy)); }
     }
 
-    backgroundLoad(){
-        this.backgroundImage.src.addEventListener("load", this.backgroundLoadChange())
-        if(this.background.backgroundLoad == true){
-            this.board.update();
-        }
-        };
-
-    update(){
-        this.backgroundOK = this.background.backgroundLoad;
-        if(this.backgroundOK == false){
-        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeigth);
-        this.drawEntity(this.background);
-        this.drawEntity(this.player);
-        this.foods.map(foods => this.drawEntity(foods));
-        this.enemys.map(enemy => this.drawEntity(enemy));}console.log(this.backgroundOK)
-    } 
-
-    
-}
 
 
 class GameController{
-    constructor(){
+    constructor(playerImageSrc){
         const playerImage = document.createElement('img');
-        playerImage.src = "images/cat.png"
+        playerImage.src = playerImageSrc
         const enemyImage = document.createElement('img');
         enemyImage.src = "images/enemy.png"
         const foodImage = document.createElement('img');
@@ -124,6 +101,8 @@ class GameController{
         backgroundImage.src = "images/background.png"
         const widthStandard = 40;
         const heightStandard = 40;
+        const widthPlayer = 60;
+        const heightPlayer = 80;
         const playerSpeed = 10.3;
         const canvas = document.getElementById("escenario");
         let positionBeforeX = parseInt(localStorage.getItem("playerPositionX"));
@@ -133,8 +112,9 @@ class GameController{
         let positionBeforeY = 400;
         this.movement = document.getElementById("body");
         let ctx = canvas.getContext("2d");
+
         let background = new Background(0, 0, 500, 500, backgroundImage);
-        let player = new Player(7, 4, positionBeforeX, positionBeforeY, playerSpeed,widthStandard, heightStandard, playerImage);
+        let player = new Player(7, 4, positionBeforeX, positionBeforeY, playerSpeed,widthPlayer, heightPlayer, playerImage);
         let enemys = [new Enemy(4, 2, 100, 400, widthStandard, heightStandard, enemyImage), new Enemy(4, 2, 300, 400, widthStandard, heightStandard, enemyImage)];
         let foods = [new Food(2, 1, 400, 400, widthStandard, heightStandard, foodImage), new Food(2, 1, 150, 400, widthStandard, heightStandard, foodImage)];
         this.board = new Board(background, player, enemys, foods, canvas, ctx);
@@ -157,7 +137,6 @@ class GameController{
             return true;
         }
         return false;
-        
     };
 
     checkEnemysCollision(){
@@ -170,8 +149,7 @@ class GameController{
             }
         });
         this.board.enemys = this.board.enemys.filter(enemy => enemy.life > 0);
-        
-    }
+    };
 
     checkFoodsCollision(){
         var gameController = this;
@@ -184,9 +162,12 @@ class GameController{
             console.log(player.life); 
         });
         this.board.foods = this.board.foods.filter(food => food.use > 0);
-    }
+    };
     
     load(){
+        setTimeout(() => {
+        this.board.update()
+        },500);
     this.movement.addEventListener("keydown", (e) => {
         let playerPosition = this.board.player.getPosition();
         switch(e.key){
@@ -226,39 +207,14 @@ class GameController{
                 break;
         }
     });
-    }
+};
     
 }
+fetch("https://api.npoint.io/caa675e5edd5ab2c8a2b")
+.then(response => response.json())
+.then(json => {
+    let randomNumber = Math.round(Math.random(json.cat.length)*3,5)
+    let gameController = new GameController(json.cat[randomNumber].src);
+    gameController.load();
 
-let gameController = new GameController();
-gameController.load();
-
-
-// var timer = new Timer();
-// $('#chronoExample .startButton').click(function () {
-//     timer.start();
-// });
-
-// $('#chronoExample .pauseButton').click(function () {
-//     timer.pause();
-// });
-
-// $('#chronoExample .stopButton').click(function () {
-//     timer.stop();
-// });
-
-// $('#chronoExample .resetButton').click(function () {
-//     timer.reset();
-// });
-
-// timer.addEventListener('secondsUpdated', function (e) {
-//     $('#chronoExample .values').html(timer.getTimeValues().toString());
-// });
-
-// timer.addEventListener('started', function (e) {
-//     $('#chronoExample .values').html(timer.getTimeValues().toString());
-// });
-
-// timer.addEventListener('reset', function (e) {
-//     $('#chronoExample .values').html(timer.getTimeValues().toString());
-// });
+})
