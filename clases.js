@@ -1,3 +1,4 @@
+
 class Entity{
     constructor (positionX, positionY, width, height, src){
         this.positionX = positionX;
@@ -42,6 +43,7 @@ class Enemy extends Entity{
         super(positionX, positionY, width, height, src)
         this.life = life;
         this.dmge = dmge;
+        this.direction = "up";
     }
 }
 
@@ -64,12 +66,20 @@ class Board{
         this.canvasHeigth = 500;
         this.ctx = ctx;
 
+        //esto no se hace mas aca, ahora lo hace setinterval
+        //this.drawEntity(this.background);
+        //this.drawEntity(this.player);
+        //this.foods.map(foods => this.drawEntity(foods));
+        //this.enemys.map(enemy => this.drawEntity(enemy));
+    }
+
+    update(){
+        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeigth);
         this.drawEntity(this.background);
         this.drawEntity(this.player);
         this.foods.map(foods => this.drawEntity(foods));
-        this.enemys.map(enemy => this.drawEntity(enemy));
+        this.enemys.map(enemy => this.drawEntity(enemy)); 
     }
-
 
     drawEntity(entity){
         this.ctx.drawImage(entity.src, entity.positionX, entity.positionY, entity.width, entity.height);
@@ -79,12 +89,7 @@ class Board{
         this.player.positionX;
     }
 
-    update(){
-            this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeigth);
-            this.drawEntity(this.background);
-            this.drawEntity(this.player);
-            this.foods.map(foods => this.drawEntity(foods));
-            this.enemys.map(enemy => this.drawEntity(enemy)); }
+
     }
 
 
@@ -112,18 +117,48 @@ class GameController{
         let positionBeforeY = 400;
         this.movement = document.getElementById("body");
         let ctx = canvas.getContext("2d");
-
         let background = new Background(0, 0, 500, 500, backgroundImage);
         let player = new Player(7, 4, positionBeforeX, positionBeforeY, playerSpeed,widthPlayer, heightPlayer, playerImage);
         let enemys = [new Enemy(4, 2, 100, 400, widthStandard, heightStandard, enemyImage), new Enemy(4, 2, 300, 400, widthStandard, heightStandard, enemyImage)];
         let foods = [new Food(2, 1, 400, 400, widthStandard, heightStandard, foodImage), new Food(2, 1, 150, 400, widthStandard, heightStandard, foodImage)];
         this.board = new Board(background, player, enemys, foods, canvas, ctx);
         this.count = 5;
+        
+        this.lifeHTML = document.getElementById("life")
+        var gameControllerInstance = this
+        this.interval = setInterval(function(){
+            gameControllerInstance.board.update()
+            gameControllerInstance.lifeHTML.innerHTML = "Tenés " + gameControllerInstance.board.player.life + " de vida!";
+
+            //moviendo los enemigos de a un pixel
+            gameControllerInstance.board.enemys.map(enemy => gameControllerInstance.moveEnemy(enemy));
+
+            //chequeando colisiones
+            gameControllerInstance.checkEnemysCollision()
+            gameControllerInstance.checkFoodsCollision()
+
+        }, 10);
+    }
+
+    moveEnemy(enemy){
+        if (enemy.direction == "up"){
+            enemy.positionY = enemy.positionY - 1;
+        }
+        if (enemy.direction == "down"){
+            enemy.positionY = enemy.positionY + 1;
+        }
+        if (enemy.positionY == 200){
+                enemy.direction = "down";
+        }
+        if (enemy.positionY == 400){
+            enemy.direction = "up";
+        }
     }
 
     get player(){
         return this.board.player;
     };
+
 
     collisionX(obj1, obj2){
         let limitLeftObj1 =  obj1.positionX - obj1.width/2;
@@ -139,11 +174,26 @@ class GameController{
         return false;
     };
 
+    collisionY(obj1, obj2){
+        let limitLeftObj1 =  obj1.positionY - obj1.height/2;
+        let limitRightObj1 = obj1.positionY + obj1.height/2;
+        let limitLeftObj2 = obj2.positionY - obj2.height/2;
+        let limitRightObj2 = obj2.positionY + obj2.height/2;
+        if(limitLeftObj2 <= limitRightObj1 && limitRightObj1 <= limitRightObj2){
+            return true;
+        }
+        if(limitLeftObj2 <= limitLeftObj1 && limitLeftObj1 <= limitRightObj2){
+            return true;
+        }
+        return false;
+    };
+
+
     checkEnemysCollision(){
         let gameController = this;
         let player = this.board.player;
         this.board.enemys.map(function(enemy){
-            if(gameController.collisionX(player, enemy)){
+            if(gameController.collisionX(player, enemy) && gameController.collisionY(player, enemy)){
                 player.life -= enemy.dmge;
                 enemy.life -= player.dmge;
             }
@@ -165,9 +215,8 @@ class GameController{
     };
     
     load(){
-        setTimeout(() => {
-        this.board.update()
-        },1500);
+       
+
     this.movement.addEventListener("keydown", (e) => {
         let playerPosition = this.board.player.getPosition();
         switch(e.key){
@@ -183,7 +232,6 @@ class GameController{
                 if(playerPosition[0] >= 1 ){
                     playerPosition[0] -= 1 * this.board.player.speed;
                     this.board.player.setPosition(playerPosition);
-                    this.board.update();
                     this.count += -1;
                 if(this.count == 0){
                     localStorage.setItem("playerPositionX", playerPosition[0]);
@@ -196,14 +244,11 @@ class GameController{
                 if(playerPosition[0] <= 460){
                 playerPosition[0] += 1 * this.board.player.speed;
                 this.board.player.setPosition(playerPosition);
-                this.board.update();
                 this.count += -1;
                 if(this.count == 0){
                     localStorage.setItem("playerPositionX", playerPosition[0]);
                     this.count = 5;
                 }};
-                this.checkEnemysCollision();
-                this.checkFoodsCollision();
                 break;
         }
     });
@@ -211,11 +256,59 @@ class GameController{
     
 }
 
+const comienzo = document.createElement('img');
+comienzo.src = "images/comienzo.png";
+const canvas = document.getElementById("escenario");
+let ctx = canvas.getContext("2d");
+
+setTimeout(() => {
+    ctx.drawImage(comienzo, 0, 0, 500, 500)
+},1000);
+
+
+const body = document.getElementById("body");
+body.addEventListener("click", () =>
 fetch("https://api.npoint.io/caa675e5edd5ab2c8a2b")
 .then(response => response.json())
 .then(json => {
     let randomNumber = Math.round(Math.random(json.cat.length)*3,5)
     let gameController = new GameController(json.cat[randomNumber].src);
+    //eventos del timer
+
+    var timer = new Timer;
+    let config = {
+        startValues: [0,10,0,0,0],
+        target: [0,0,0,0,0],
+        countdown: true 
+    }
+    
+    const gameOver = document.createElement('img');
+    gameOver.src = "images/game.png";
+    const felicitaciones = document.createElement('img');
+    felicitaciones.src = "images/felicitaciones.png";
+    const canvas = document.getElementById("escenario");
+    
+    let ctx = canvas.getContext("2d");
+    timer.start(config);
+    timer.addEventListener('secondsUpdated', function(e) {
+    $('#basicUsage').html(timer.getTimeValues().toString());
+    });
+    
+    timer.addEventListener('stopped', function(e) {
+    clearInterval(gameController.interval)
+    ctx.clearRect(0, 0, 500, 500);
+    if (gameController.board.player.life >= 7){
+        ctx.drawImage(felicitaciones, 0, 0, 500, 500)
+
+    } else {
+        ctx.drawImage(gameOver, 0, 0, 500, 500)
+    }
+    });
+
+
+    //
+
+
     gameController.load();
 
-})
+}))
